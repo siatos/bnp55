@@ -15,4 +15,4 @@ PASSWORD = "root"
 DB_NAME = "BIOSeq_db"
 TABLE   = "BIOSeq_tb"
 MAX_LEN = 1024
-
+MAX_CR_LEN = 100 

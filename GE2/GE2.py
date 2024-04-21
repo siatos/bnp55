@@ -215,7 +215,7 @@ def get_entry_data():
                 bioseq = input(prompt)
                 if bioseq.isalpha():
                     if len(bioseq) > MAX_LEN:
-                        print("Max len of sequence should less than {}".format(MAX_LEN))
+                        print("Max len of sequence should be less than {}".format(MAX_LEN))
                     else:
                         print("valid seq data ...")
                         bioseq = bioseq.upper()
@@ -240,8 +240,11 @@ def get_entry_data():
         while True:
             try:
                 creator = input(prompt)
-                break
-            except ValueError:
+                if len(creator) > MAX_CR_LEN:
+                    print("Max len of creator name should be less than {}".format(MAX_CR_LEN))
+                else:
+                    break
+            except TypeError:
                 print("Please enter a char string for creator")
 
         bioseq_obj = Biosequence(seqtype, bioseq, creator)
