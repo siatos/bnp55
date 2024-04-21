@@ -6,23 +6,10 @@
     @desc: 
 '''
 import sys
-#import os
-#import argparse
 from mysql import connector
-#from mysql.connector.errors import Error
 from mysql.connector import errorcode
 from constants import *
-#from enum import Enum
 
-#def parseArgs():
-#    parser = argparse.ArgumentParser(description='')
-#    parser.add_argument('--swpDescription', action='store', type=str, help='Description for ext descr e.g. Official Load')
-#    parser.add_argument('--swpConfigFile', action='store', type=str, help='SWP ini file')
-#    parser.add_argument('--swpWorkspace', action='store', type=str, help='SWP job Workspace')
-#    parser.add_argument('--swpRelease', action='store', type=str, help='SWP Release')
-#    parser.add_argument('--swpVersion', action='store', type=str, help='SWP Version')
-#    args = parser.parse_args()
-#    return args
 
 class Biosequence:
     def __init__(self, Type, Sequence, Creator):
@@ -64,17 +51,19 @@ class Biosequence:
 
     def print_info(self, dbid = -1):
         if dbid != -1:
-            print("========= For DB ID {} rec".format(dbid))
-        print("          Seq Type: {}".format(self.Type))
-        print("          Sequence  {}".format(self.Sequence))
-        print("          Seq Creator: {}".format(self.Creator))
-  
+            print("========== For DB ID {} rec ==========".format(dbid))
+        else:
+            print("========================================")
+        print("          Type:     {}".format(self.Type))
+        print("          Sequence: {}".format(self.Sequence))
+        print("          Creator:  {}".format(self.Creator))
+        print("========================================")
 
 def display_menu():
-    print("======================")
+    print("\n========================================")
     for key in menu_options.keys():
         print ("    {}) {}".format(key, menu_options[key]))
-    print("======================")
+    print("========================================\n")
 
 def insert_db_entry(dbconn, table_name, s):
     print("Insert New Entry ...")
@@ -256,38 +245,36 @@ def get_entry_data():
                 print("Please enter a char string for creator")
 
         bioseq_obj = Biosequence(seqtype, bioseq, creator)
-        print("entered sequence is {}".format(bioseq_obj.get_Sequence()))
+        # print("entered sequence is {}".format(bioseq_obj.get_Sequence()))
         (val_result, val_type) = bioseq_obj.validate_sequence(bioseq_obj.get_Sequence())
-        #print("validation type is {}".format(val_type))
+        # print("validation type is {}".format(val_type))
         if val_result:
             if val_type == "COMMON":
-                print("Let user to decide as only common bases are contained ...")
-                print("selected Object is valid")
+                print("Let user to decide only common bases are contained ...selected Object is valid")
                 objNotValid = False  # New object validated
             else:
-                if val_type != bioseq_obj.get_Type() and val_type != "COMMON":
+                if val_type != bioseq_obj.get_Type():
                     print("Incompatible Types: Type from Validation {} while Type selected : {}".format(val_type, bioseq_obj.get_Type()))
                 else:
-                    print("type is correctly selected Object is valid")
+                    print("Type is correctly selected Object is valid")
                     objNotValid = False
         else:
-            print("seq contains invalid chars not RNA or DNA try again")
+            print("seq contains invalid chars not RNA or DNA please try again")
     return bioseq_obj
 
 
 
 if __name__=='__main__':
-   #args = parseArgs()
-   #print('Arguments:')
 
    print("some necessary Initializations ...")
    print("starting ...")
 
    mydbconn = initialize_db()
-   check_db_existence(mydbconn, DB_NAME)
-   create_db_Table(mydbconn, TABLE)
+   if not check_db_existence(mydbconn, DB_NAME):
+       sys.exit(1)
+   if not create_db_Table(mydbconn, TABLE):
+       sys.exit(1)
 
-   #exit(0)
    while(True):
         display_menu()
         opt = ""
@@ -298,18 +285,18 @@ if __name__=='__main__':
         if opt == 1:
            print("Inserting new entry... ")
            print("getting & validating new data ...")
+           # create the object
            s = get_entry_data()
            s.print_info()
-           # create the object
            insert_db_entry(mydbconn, TABLE, s)
         elif opt == 2:
             iid = get_id_input()
             entry_count = retrieve_db_id(mydbconn, TABLE, iid)
             if entry_count > 0:
                 print("About to delete {} entries".format(entry_count))
-                delete_db_entry(mydbconn, TABLE, id)
+                delete_db_entry(mydbconn, TABLE, iid)
             else:
-                print("Nothing to delete")
+                print("Nothing to delete No entry found in db with id {}".format(iid))
 
         elif opt == 3:
             id = get_id_input()
@@ -319,11 +306,11 @@ if __name__=='__main__':
                 s = Biosequence(entry_list[0][1], entry_list[0][2], entry_list[0][3])
                 s.print_info(id)
             else:
-                print("something went - Found {} objects".format(list_size))
+                print("Found {} objects - or something went wrong".format(list_size))
 
         elif opt == 4:
             print('Thank you for using the application')
-            sys.exit()
+            sys.exit(0)
         else:
             print('Invalid option. Please enter a number between 1..4')
 
