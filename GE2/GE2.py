@@ -3,7 +3,11 @@
     @email: 
     @created: 
     @modified: 
-    @desc: 
+    @desc: Attempts to solve questions A, B & C of GE2 in bnp55
+           Tested on 
+             Ubuntu 22.04
+             python 3.10.12 
+             mySQL 8.0.36
 '''
 import sys
 from mysql import connector
