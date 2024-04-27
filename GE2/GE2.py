@@ -208,63 +208,62 @@ def get_BioSeqType(intype):
 
 
 def get_entry_data():
-    objNotValid = True
-    while objNotValid:
-        while True:
-            try:
-                prompt = "Enter bio sequence (up to 1024 chars): "
-                bioseq = input(prompt)
-                if bioseq.isalpha():
-                    if len(bioseq) > MAX_LEN:
-                        print("Max len of sequence should be less than {}".format(MAX_LEN))
-                    else:
-                        print("valid seq data ...")
-                        bioseq = bioseq.upper()
-                        break
-            except TypeError:
-                print('Use only letters for the sequence string ...')
-
-        prompt = "Enter bio sequence type (either 1=RNA or 2=DNA): "
-        while True:
-            try:
-                ntype = int(input(prompt))
-                if  0 < ntype < 3:
-                    seqtype = get_BioSeqType(ntype)
-                    print("You have selected: {}".format(seqtype))
-                    break
+    objIsValid = False
+    while True:
+        try:
+            prompt = "Enter bio sequence (up to 1024 chars): "
+            bioseq = input(prompt)
+            if bioseq.isalpha():
+                if len(bioseq) > MAX_LEN:
+                    print("Max len of sequence should be less than {}".format(MAX_LEN))
                 else:
-                    print("selected entry should be in [1, 2]")
-            except ValueError:
-                print("Please enter a valid integer 1 or 2")
-
-        prompt = "Enter bio sequence creator: "
-        while True:
-            try:
-                creator = input(prompt)
-                if len(creator) > MAX_CR_LEN:
-                    print("Max len of creator name should be less than {}".format(MAX_CR_LEN))
-                else:
+                    print("valid seq data ...")
+                    bioseq = bioseq.upper()
                     break
-            except TypeError:
-                print("Please enter a char string for creator")
+        except TypeError:
+            print('Use only letters for the sequence string ...')
 
-        bioseq_obj = Biosequence(seqtype, bioseq, creator)
-        # print("entered sequence is {}".format(bioseq_obj.get_Sequence()))
-        (val_result, val_type) = bioseq_obj.validate_sequence(bioseq_obj.get_Sequence())
-        # print("validation type is {}".format(val_type))
-        if val_result:
-            if val_type == "COMMON":
-                print("Let user to decide only common bases are contained ...selected Object is valid")
-                objNotValid = False  # New object validated
+    prompt = "Enter bio sequence type (either 1=RNA or 2=DNA): "
+    while True:
+        try:
+            ntype = int(input(prompt))
+            if  0 < ntype < 3:
+                seqtype = get_BioSeqType(ntype)
+                print("You have selected: {}".format(seqtype))
+                break
             else:
-                if val_type != bioseq_obj.get_Type():
-                    print("Incompatible Types: Type from Validation {} while Type selected : {}".format(val_type, bioseq_obj.get_Type()))
-                else:
-                    print("Type is correctly selected Object is valid")
-                    objNotValid = False
+                print("selected entry should be in [1, 2]")
+        except ValueError:
+            print("Please enter a valid integer 1 or 2")
+
+    prompt = "Enter bio sequence creator: "
+    while True:
+        try:
+            creator = input(prompt)
+            if len(creator) > MAX_CR_LEN:
+                print("Max len of creator name should be less than {}".format(MAX_CR_LEN))
+            else:
+                break
+        except TypeError:
+            print("Please enter a char string for creator")
+
+    bioseq_obj = Biosequence(seqtype, bioseq, creator)
+    # print("entered sequence is {}".format(bioseq_obj.get_Sequence()))
+    (val_result, val_type) = bioseq_obj.validate_sequence(bioseq_obj.get_Sequence())
+    # print("validation type is {}".format(val_type))
+    if val_result:
+        if val_type == "COMMON":
+            print("Let user to decide only common bases are contained ...selected Object is valid")
+            objIsValid = True  # New object validated
         else:
-            print("seq contains invalid chars not RNA or DNA please try again")
-    return bioseq_obj
+            if val_type != bioseq_obj.get_Type():
+                print("Incompatible Types: Type from Validation {} while Type selected : {}".format(val_type, bioseq_obj.get_Type()))
+            else:
+                print("Type is correctly selected Object is valid")
+                objIsValid = True
+    else:
+        print("seq contains invalid chars cannot be either RNA or DNA ")
+    return objIsValid, bioseq_obj
 
 
 
@@ -290,9 +289,10 @@ if __name__=='__main__':
             print("Inserting new entry... ")
             print("getting & validating new data ...")
             # create the object
-            s = get_entry_data()
-            s.print_info()
-            insert_db_entry(mydbconn, TABLE, s)
+            IsValid, s = get_entry_data()
+            if IsValid:
+                s.print_info()
+                insert_db_entry(mydbconn, TABLE, s)
         elif opt == 2:
             iid = get_id_input()
             entry_count = retrieve_db_id(mydbconn, TABLE, iid)
