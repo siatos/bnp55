@@ -10,8 +10,8 @@ menu_options = {
 }
 
 HOST = "localhost"
-USER = "root"
-PASSWORD = "root"
+USER = "admin"
+PASSWORD = "admin"
 DB_NAME = "BIOSeq_db"
 TABLE   = "BIOSeq_tb"
 MAX_LEN = 1024

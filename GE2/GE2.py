@@ -86,7 +86,7 @@ def get_id_input():
             prompt = "Enter id for entry to be retrieved: "
             iid = int(input(prompt))
             if  iid > 0:
-                print("Entry Id to be retrieved: {}".format(iid))
+                print("Entry Id to be retrieved for del/print: {}".format(iid))
                 break
             else:
                 print("entry should be a positive number")
@@ -95,7 +95,7 @@ def get_id_input():
     return iid
 
 def retrieve_db_id(dbconn, table_name, dbid):
-    print("Retrieve Entry ...")
+    print("Retrieve Entry ID ...")
     count = 0
     try:
         cursor = dbconn.cursor(buffered=True)
@@ -127,7 +127,7 @@ def retrieve_db_entry(dbconn, table_name, id):
     return res, len(res)
 
 def delete_db_entry(dbconn, table_name, id):
-    print("Delete Entry ...")
+    print("Delete Entry ... with ID: {}".format(id))
     try:
         cursor = dbconn.cursor(buffered=True)
         sql_cmd = "DELETE FROM {} WHERE ID = {}".format(table_name, id)
@@ -139,9 +139,6 @@ def delete_db_entry(dbconn, table_name, id):
         print("Message {}".format(err.msg))
     dbconn.commit()
 
-
-#def print_entry():
-#    print("Print Entry")
 
 
 def initialize_db():
