@@ -222,11 +222,11 @@ def get_entry_data():
                         bioseq = bioseq.upper()
                         break
             except TypeError:
-                 print('Use only letters for the sequence string ...')
+                print('Use only letters for the sequence string ...')
 
         prompt = "Enter bio sequence type (either 1=RNA or 2=DNA): "
         while True:
-             try:
+            try:
                 ntype = int(input(prompt))
                 if  0 < ntype < 3:
                     seqtype = get_BioSeqType(ntype)
@@ -234,7 +234,7 @@ def get_entry_data():
                     break
                 else:
                     print("selected entry should be in [1, 2]")
-             except ValueError:
+            except ValueError:
                 print("Please enter a valid integer 1 or 2")
 
         prompt = "Enter bio sequence creator: "
@@ -270,16 +270,16 @@ def get_entry_data():
 
 if __name__=='__main__':
 
-   print("some necessary Initializations ...")
-   print("starting ...")
+    print("some necessary Initializations ...")
+    print("starting ...")
 
-   mydbconn = initialize_db()
-   if not check_db_existence(mydbconn, DB_NAME):
-       sys.exit(1)
-   if not create_db_Table(mydbconn, TABLE):
-       sys.exit(1)
+    mydbconn = initialize_db()
+    if not check_db_existence(mydbconn, DB_NAME):
+        sys.exit(1)
+    if not create_db_Table(mydbconn, TABLE):
+        sys.exit(1)
 
-   while(True):
+    while(True):
         display_menu()
         opt = ""
         try:
@@ -287,12 +287,12 @@ if __name__=='__main__':
         except:
             print('Wrong input. Please enter a number')
         if opt == 1:
-           print("Inserting new entry... ")
-           print("getting & validating new data ...")
-           # create the object
-           s = get_entry_data()
-           s.print_info()
-           insert_db_entry(mydbconn, TABLE, s)
+            print("Inserting new entry... ")
+            print("getting & validating new data ...")
+            # create the object
+            s = get_entry_data()
+            s.print_info()
+            insert_db_entry(mydbconn, TABLE, s)
         elif opt == 2:
             iid = get_id_input()
             entry_count = retrieve_db_id(mydbconn, TABLE, iid)
@@ -317,4 +317,3 @@ if __name__=='__main__':
             sys.exit(0)
         else:
             print('Invalid option. Please enter a number between 1..4')
-
