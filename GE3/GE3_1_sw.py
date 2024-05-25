@@ -57,9 +57,9 @@ def NeedlWunsch(seq1 , seq2 , transm , d):
 
     for i in range(1, len(seq2)+1):
         # initialize gap row
-        scoreM[0].append((str(d*i)+','+LAr).rjust(4))     # fill first row with gap penalty (d) multiplied by pos first pos = 0
+        scoreM[0].append((" 0"+','+'-').rjust(4))     # fill first row with gap penalty (d) multiplied by pos first pos = 0
     for i in range(1, len(seq1)+1):
-        scoreM.append([str(d*i)+","+UpAr])
+        scoreM.append([" 0"+","+"-"])
     print("")
     print("Initial State of Score Matrix")
     printMatrix(scoreM)
@@ -73,7 +73,10 @@ def NeedlWunsch(seq1 , seq2 , transm , d):
             s2 =  localscore + d
             localscore = int(scoreM[i+1][j].split(",")[0])
             s3 = localscore + d
-            s=str(max(s1, s2, s3))+','+ maxof3tuple(s1 , s2 , s3)
+            if max(s1, s2, s3, 0) <= 0:
+                s=" 0"+", -"
+            else:
+                s=str(max(s1, s2, s3, 0))+','+ maxof3tuple(s1 , s2 , s3)
             s=s.rjust(4)
             scoreM[i+1].append(s)
     return scoreM
