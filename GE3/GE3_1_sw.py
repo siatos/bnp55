@@ -27,21 +27,10 @@ transm = {'AA':  1,
 # for BLOSUM use blosum python and create a dict dtnamically
 # based on input sequences
 
-#LAr="\u2192"     # left Arrow
-#UpAr="\u2193"    # Up Arrow
-#DiAr="\u2198"    # Diagonal Arrow
-
-
-#def printMatrix(s):
-#    #print(s)
-#    for i in range(len(s)):
-#        print("{}".format(s[i:i+1]))
-
 
 def SmithWaterm(seq1 , seq2 , transm , d):
     # d is the penalty gap
     scoreM = [['0,S'.rjust(4)]]         # score matrix a list of lists
-
 
     for i in range(1, len(seq2)+1):
         # initialize gap row
@@ -94,10 +83,14 @@ def scoreM_pos(cell1 , cell2 , transitionmatrix , gappenalty):
 def smblosum(seqstr1, seqstr2):
     sm = {}
     matrix = bl.BLOSUM(50)
-    for j in "AGEHPW":
-        for i in "AGEHPW":
-           val = matrix[j][i]
-           sm[i+j] = int(val)
+    s = seqstr1+seqstr2
+    s = set(s)
+    s = list(s)
+    s = "".join(s)
+    for j in s:
+        for i in s:
+            val = matrix[j][i]
+            sm[i+j] = int(val)
     print(sm)
     return sm
 
@@ -106,6 +99,7 @@ def parseArgs():
     parser = argparse.ArgumentParser(description='')
     parser.add_argument('sq1', action='store', type=str, help='SWP Release')
     parser.add_argument('sq2', action='store', type=str, help='SWP diff file')
+    parser.add_argument('gap', action='store', type=str, help='')
     args = parser.parse_args()
     return args
     
@@ -116,13 +110,14 @@ if __name__ == "__main__":
     print('Arguments:')
     print('\tsq1: ' + args.sq1)
     print('\tsq2: ' + args.sq2)
-    #S = NeedlWunsch(args.sq1 , args.sq2 , transm , -1)
+    print('\tgap: ' + args.gap)
+    gap = (-1)*int(args.gap)
+    
     transm = smblosum(args.sq1 , args.sq2)
-    S = SmithWaterm(args.sq1 , args.sq2 , transm , -2)
+    S = SmithWaterm(args.sq1 , args.sq2 , transm , gap)
 
     print("Results:\n") #
     print("Score:") #
     printMatrix(S)
 
-    print("")
 

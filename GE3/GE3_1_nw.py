@@ -1,3 +1,4 @@
+from constants import * 
 import argparse
 import blosum as bl
 # standard transition matrix build as dictionary
@@ -20,34 +21,6 @@ transm = {'AA':  1,
           'TG': -1,
           'TT':  1}
 
-LAr="\u2192"     # left Arrow
-UpAr="\u2193"    # Up Arrow
-DiAr="\u2198"    # Diagonal Arrow
-
-def read_submat_file(filename):
-    sm = {}
-    f = open(filename, "r")
-    line = f.readline()
-    tokens = line.split("\t")
-    ns = len(tokens)
-    alphabet = []
-    for i in range(0, ns):
-        alphabet.append(tokens[i][0])
-    for i in range(0,ns):
-        line = f.readline();
-        tokens = line.split("\t");
-        for j in range(0, len(tokens)):
-            k = alphabet[i]+alphabet[j]
-            sm[k] = int(tokens[j])
-    return sm
-
-
-
-
-def printMatrix(s):
-    #print(s)
-    for i in range(len(s)):
-        print("{}".format(s[i:i+1]))
 
 
 def NeedlWunsch(seq1 , seq2 , transm , d):
@@ -92,27 +65,6 @@ def maxof3tuple(cell1 ,  cell2, cell3):
             return LAr     # from Left:     cell3 > cell2 > cell1
 
 
-def recover_align(traceM, seq1 , seq2):
-    res = ["", ""]
-    i = len(seq1)
-    j = len(seq2)
-
-    while i>0 or j >0:
-        if traceM[i][j] == 1:
-            res[0] = seq1[i-1] + res[0]
-            res[1] = seq2[j-1] + res[1]
-            i -= 1
-            j -= 1
-        elif traceM[i][j] == 3:
-            res [0] = "-" + res[0]
-            res [1] = seq2[j-1] + res[1]
-            j -= 1
-        else:
-            res[0] = seq1[i-1] + res[0]
-            res[1] = "-" + res[1]
-            i -= 1
-    return res
-
 
 def scoreM_pos(cell1 , cell2 , transitionmatrix , gappenalty):
     dkey = cell1+cell2
@@ -125,8 +77,11 @@ def scoreM_pos(cell1 , cell2 , transitionmatrix , gappenalty):
 def smblosum(seqstr1, seqstr2):
     sm = {}
     matrix = bl.BLOSUM(50)
-    for j in "AGEHPW":
-        for i in "AGEHPW":
+    s = seqstr1+seqstr2
+    ls = list(set(s))
+    print(ls)
+    for j in ls:
+        for i in ls:
            val = matrix[j][i]
            sm[i+j] = int(val)
     print(sm)
@@ -135,8 +90,9 @@ def smblosum(seqstr1, seqstr2):
 
 def parseArgs():
     parser = argparse.ArgumentParser(description='')
-    parser.add_argument('sq1', action='store', type=str, help='SWP Release')
-    parser.add_argument('sq2', action='store', type=str, help='SWP diff file')
+    parser.add_argument('sq1', action='store', type=str, help='')
+    parser.add_argument('sq2', action='store', type=str, help='')
+    parser.add_argument('gap', action='store', type=str, help='')
     args = parser.parse_args()
     return args
     
@@ -147,14 +103,16 @@ if __name__ == "__main__":
     print('Arguments:')
     print('\tsq1: ' + args.sq1)
     print('\tsq2: ' + args.sq2)
-    #S = NeedlWunsch(args.sq1 , args.sq2 , transm , -1)
-    transm = smblosum(args.sq1 , args.sq2)
-    S = NeedlWunsch(args.sq1 , args.sq2 , transm , -2)
+    print('\tgap: ' + args.gap)
+    gap = (-1)*int(args.gap)
+
+    S = NeedlWunsch(args.sq1 , args.sq2 , transm , gap)
+
+    #transm = smblosum(args.sq1 , args.sq2)
+    #S = SmithWaterm(args.sq1 , args.sq2 , transm , gap)
+
 
     print("Results:\n") #
     print("Score:") #
     printMatrix(S)
-
-    print("")
-    #recover_align(S, args.sq1 , args.sq2)
 
