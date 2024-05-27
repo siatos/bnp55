@@ -2,7 +2,12 @@
 # usage: python GE3_1_sw.py HGAEEWGAHG APAHEWEG
 # 
 import argparse
+
+# use python library blosum installed with: pip install blosum
+# this is needed if we want to use the blosum50 to get transition penalties
+# instead of the standard matrix transm below where we have matc=1 not match = -1
 import blosum as bl
+
 from constants import *
 # standard transition matrix build as dictionary
 # if base row cell equals column base cell retun 1 otherwise -1
@@ -24,7 +29,7 @@ transm = {'AA':  1,
           'TG': -1,
           'TT':  1}
 
-# for BLOSUM use blosum python and create a dict dtnamically
+# for BLOSUM use blosum python lib and create a dict dtnamically
 # based on input sequences
 
 

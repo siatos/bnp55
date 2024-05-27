@@ -1,6 +1,10 @@
 from constants import * 
 import argparse
+# use python library blosum installed with: pip install blosum
+# this is needed if we want to use the blosum50 to get transition penalties
+# instead of the standard matrix transm below where we have matc=1 not match = -1
 import blosum as bl
+
 # standard transition matrix build as dictionary
 # if base row cell equals column base cell retun 1 otherwise -1
 # 4x4 = 16 keys 
@@ -20,7 +24,6 @@ transm = {'AA':  1,
           'TC': -1,
           'TG': -1,
           'TT':  1}
-
 
 
 def NeedlWunsch(seq1 , seq2 , transm , d):
@@ -106,10 +109,12 @@ if __name__ == "__main__":
     print('\tgap: ' + args.gap)
     gap = (-1)*int(args.gap)
 
+    # needleman-wunsch using dictionary with values only -1/+1
     S = NeedlWunsch(args.sq1 , args.sq2 , transm , gap)
 
+    # needleman-wunsch using dictionary with values taken from blosum50
     #transm = smblosum(args.sq1 , args.sq2)
-    #S = SmithWaterm(args.sq1 , args.sq2 , transm , gap)
+    #S = NeedlWunsch(args.sq1 , args.sq2 , transm , gap)
 
 
     print("Results:\n") #
