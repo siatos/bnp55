@@ -28,14 +28,14 @@ transm = {'AA':  1,
 
 def NeedlWunsch(seq1 , seq2 , transm , d):
     # d is the penalty gap
-    scoreM = [['0,S'.rjust(4)]]         # score matrix a list of lists
+    scoreM = [['0, S '.rjust(6)]]         # score matrix a list of lists
 
 
     for i in range(1, len(seq2)+1):
         # initialize gap row
-        scoreM[0].append((str(d*i)+','+LAr).rjust(4))     # fill first row with gap penalty (d) multiplied by pos first pos = 0
+        scoreM[0].append((str(d*i)+','+str(Empty+LAr+Empty)).rjust(7))     # fill first row with gap penalty (d) multiplied by pos first pos = 0
     for i in range(1, len(seq1)+1):
-        scoreM.append([str(d*i)+","+UpAr])
+        scoreM.append([str(d*i)+","+str(Empty+UpAr+Empty)])
     print("")
     print("Initial State of Score Matrix")
     printMatrix(scoreM)
@@ -52,32 +52,32 @@ def NeedlWunsch(seq1 , seq2 , transm , d):
             # calculate from left side cell
             localscore = int(scoreM[i+1][j].split(",")[0])
             s3 = localscore + d
-            s=str(max(s1, s2, s3))+','+ maxof3tuple(s1 , s2 , s3)
-            s=s.rjust(4)
+            s=str(max(s1, s2, s3))+','+ str(maxof3tuple(s1 , s2 , s3))
+            s=s.rjust(7)
             scoreM[i+1].append(s)
     return scoreM
 
 
 def maxof3tuple(cell1 ,  cell2, cell3):
     lmax = max(cell1, cell2, cell3)
-    if cell1 == lmax:
-        return DiAr   # from Diagonal: cell1 > cell2, cell3
-    elif cell2 == lmax:
-        return UpAr
+    if cell1 == cell2 == cell3:
+        result = Empty+StAr+Empty   # i.e: ' * '
     else:
-        return UpAr
-
-#    if cell1  > cell2:
-#        if cell1 > cell3:
-#            return DiAr   # from Diagonal: cell1 > cell2, cell3
-#        else:
-#            return LAr    # from Left:     cell3 > cell1 > cell2 
-#    else:
-#        if cell2 > cell3:
-#            return  UpAr   # from Up:       cell2 > cell1, cell3 
-#        else:
-#            return LAr     # from Left:     cell3 > cell2 > cell1
-
+        if cell1 == lmax:
+            if cell1 == cell2:
+                result = Empty+DiAr+UpAr
+            elif cell1 == cell3:
+                result = LAr+DiAr+Empty
+            else:
+                result = Empty+DiAr+Empty   # from Diagonal: cell1 > cell2, cell3
+        elif cell2 == lmax:
+            if cell2 == cell3:
+                result = LAr+Empty+UpAr
+            else:
+                result = Empty+Empty+UpAr
+        else:
+            result = LAr+Empty+Empty
+    return result
 
 
 def scoreM_pos(cell1 , cell2 , transitionmatrix , gappenalty):
