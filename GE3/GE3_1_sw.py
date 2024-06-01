@@ -35,13 +35,13 @@ transm = {'AA':  1,
 
 def SmithWaterm(seq1 , seq2 , transm , d):
     # d is the penalty gap
-    scoreM = [['0,S'.rjust(4)]]         # score matrix a list of lists
+    scoreM = [['0, S '.rjust(6)]]         # score matrix a list of lists
 
     for i in range(1, len(seq2)+1):
         # initialize gap row
-        scoreM[0].append((" 0"+','+'-').rjust(4))     # fill first row with gap penalty (d) multiplied by pos first pos = 0
+        scoreM[0].append((" 0"+','+str(Empty+Dash+Empty)).rjust(7))     # fill first row with gap penalty (d) multiplied by pos first pos = 0
     for i in range(1, len(seq1)+1):
-        scoreM.append([" 0"+","+"-"])
+        scoreM.append([" 0"+","+str(Empty+Dash+Empty)])
     print("")
     print("Initial State of Score Matrix")
     printMatrix(scoreM)
@@ -56,25 +56,47 @@ def SmithWaterm(seq1 , seq2 , transm , d):
             localscore = int(scoreM[i+1][j].split(",")[0])
             s3 = localscore + d
             if max(s1, s2, s3, 0) <= 0:
-                s=" 0"+", -"
+                s=" 0"+","+str(Empty+Dash+Empty)
             else:
                 s=str(max(s1, s2, s3, 0))+','+ maxof3tuple(s1 , s2 , s3)
-            s=s.rjust(4)
+            s=s.rjust(7)
             scoreM[i+1].append(s)
     return scoreM
 
 
+#def maxof3tuple(cell1 ,  cell2, cell3):
+#    if cell1  > cell2:
+#        if cell1 > cell3:
+#            return DiAr   # from Diagonal: cell1 > cell2, cell3
+#        else:
+#            return LAr    # from Left:     cell3 > cell1 > cell2 
+#    else:
+#        if cell2 > cell3:
+#            return  UpAr   # from Up:       cell2 > cell1, cell3 
+#        else:
+#            return LAr     # from Left:     cell3 > cell2 > cell1
+
 def maxof3tuple(cell1 ,  cell2, cell3):
-    if cell1  > cell2:
-        if cell1 > cell3:
-            return DiAr   # from Diagonal: cell1 > cell2, cell3
-        else:
-            return LAr    # from Left:     cell3 > cell1 > cell2 
+    lmax = max(cell1, cell2, cell3)
+    if cell1 == cell2 == cell3:
+        result = Empty+StAr+Empty   # i.e: ' * '
     else:
-        if cell2 > cell3:
-            return  UpAr   # from Up:       cell2 > cell1, cell3 
+        if cell1 == lmax:
+            if cell1 == cell2:
+                result = Empty+DiAr+UpAr
+            elif cell1 == cell3:
+                result = LAr+DiAr+Empty
+            else:
+                result = Empty+DiAr+Empty   # from Diagonal: cell1 > cell2, cell3
+        elif cell2 == lmax:
+            if cell2 == cell3:
+                result = LAr+Empty+UpAr
+            else:
+                result = Empty+Empty+UpAr
         else:
-            return LAr     # from Left:     cell3 > cell2 > cell1
+            result = LAr+Empty+Empty
+    return result
+
 
 
 def scoreM_pos(cell1 , cell2 , transitionmatrix , gappenalty):
