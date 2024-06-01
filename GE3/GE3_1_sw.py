@@ -64,18 +64,6 @@ def SmithWaterm(seq1 , seq2 , transm , d):
     return scoreM
 
 
-#def maxof3tuple(cell1 ,  cell2, cell3):
-#    if cell1  > cell2:
-#        if cell1 > cell3:
-#            return DiAr   # from Diagonal: cell1 > cell2, cell3
-#        else:
-#            return LAr    # from Left:     cell3 > cell1 > cell2 
-#    else:
-#        if cell2 > cell3:
-#            return  UpAr   # from Up:       cell2 > cell1, cell3 
-#        else:
-#            return LAr     # from Left:     cell3 > cell2 > cell1
-
 def maxof3tuple(cell1 ,  cell2, cell3):
     lmax = max(cell1, cell2, cell3)
     if cell1 == cell2 == cell3:
